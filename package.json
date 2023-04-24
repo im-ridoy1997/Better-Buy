@@ -1,0 +1,11 @@
+{
+  "name": "better-buy",
+  "version": "1.0.0",
+  "description": "It is basically a ecommerce website backend api.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
