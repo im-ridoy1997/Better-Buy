@@ -175,11 +175,10 @@ const editBanner = (req, res) => {
 };
 
 const updateBanner = (req, res) => {
-    const parent_id = req.body.parent_id === "" ? null : req.body.parent_id;
-    const id = req.body.id;
-    const category_name = req.body.category_name;
-    if(parent_id === null) {
-        connection.query(`UPDATE tbl_banner SET category_name = '${category_name}' WHERE id = '${id}'`, (err, rows) => {
+    const { id, name, description } = req.body;
+    if(req.file != null) {
+        const image = req.file.originalname;
+        connection.query(`UPDATE tbl_banner SET name = '${name}', description = '${description}', image = '${image}' WHERE id = '${id}'`, (err, rows) => {
             if(err){
                 return res.status(400).json({
                     status: false,
@@ -192,7 +191,7 @@ const updateBanner = (req, res) => {
             }
         });
     }else{
-        connection.query(`UPDATE tbl_banner SET parent_id = '${parent_id}', category_name = '${category_name}' WHERE id = '${id}'`, (err, rows) => {
+        connection.query(`UPDATE tbl_banner SET name = '${name}', description = '${description}' WHERE id = '${id}'`, (err, rows) => {
             if(err){
                 return res.status(400).json({
                     status: false,
@@ -210,7 +209,7 @@ const updateBanner = (req, res) => {
 
 const deleteBanner = (req, res) => {
     const id = req.params.id;
-    connection.query(`DELETE FROM tbl_category where id = '${id}'`, (err, rows) => {
+    connection.query(`DELETE FROM tbl_banner where id = '${id}'`, (err, rows) => {
         if(err) {
             return res.status(400).json({
                 status: false,
@@ -219,7 +218,7 @@ const deleteBanner = (req, res) => {
         }else{
             return res.status(200).json({
                 status: true,
-                message: 'Category delete successfully.'
+                message: 'Banner delete successfully.'
             }); 
         }
     })

@@ -17,6 +17,9 @@ router.delete('/admin/category/:id', backendController.deleteCategory);
 //Banner routes
 router.get('/admin/banner', backendController.getBanner);
 router.post('/admin/banner-create', fileUpload.uploadFile, formValidation.createBanner, backendController.createBanner);
+router.get('/admin/banner-edit/:id', backendController.editBanner);
+router.post('/admin/banner-update', fileUpload.updateFile, backendController.updateBanner);
+router.delete('/admin/banner/:id', backendController.deleteBanner);
 
 
 module.exports = router;
