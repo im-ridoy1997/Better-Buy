@@ -3,9 +3,10 @@ const router = express.Router();
 const backendController = require('../controllers/backendController.js');
 const formValidation = require('../middleware/formValidation.js');
 const fileUpload = require('../middleware/fileUpload.js');
+const multipleFileUpload = require('../middleware/multipleFileUpload.js');
 
 
-//Admin Routes
+//----- Admin Routes Start -----//
 
 //category routes
 router.get('/admin/category', backendController.getCategory);
@@ -20,6 +21,12 @@ router.post('/admin/banner-create', fileUpload.uploadFile, formValidation.create
 router.get('/admin/banner-edit/:id', backendController.editBanner);
 router.post('/admin/banner-update', fileUpload.updateFile, backendController.updateBanner);
 router.delete('/admin/banner/:id', backendController.deleteBanner);
+
+//Product routes
+router.get('/admin/product', backendController.getProduct);
+router.post('/admin/product-create', multipleFileUpload.uploadFiles, formValidation.createProduct, backendController.createProduct);
+
+//------ Admin Route End -----//
 
 
 module.exports = router;

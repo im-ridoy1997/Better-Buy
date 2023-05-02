@@ -224,6 +224,60 @@ const deleteBanner = (req, res) => {
     })
 };
 
+const getProduct = (req, res) => {
+    connection.query(`SELECT * FROM tbl_product WHERE is_deleted = 0`, (err, rows) => {
+        if(err) {
+            return res.status(400).json({
+                status: false,
+                error: err.message
+            });
+        }else{
+            return res.status(200).json({
+                status: true,
+                data: rows
+            });
+        }
+    });
+};
+
+const createProduct = (req, res) => {
+    const category_id = req.body.category_id;
+    const brand_id = req.body.brand_id === "" ? 0 : req.body.brand_id
+    const name = req.body.name;
+    const description = req.body.description;
+    const price = req.body.price;
+    const qty = req.body.qty;
+    const images = req.files;
+    connection.query(`INSERT INTO tbl_product (category_id, brand_id, name, description, price, qty) VALUES('${category_id}', '${brand_id}', '${name}', '${description}', '${price}', '${qty}')`, (err, rows) => {
+        if(err){
+            return res.status(400).json({
+                status: false,
+                error: err
+            });
+        }else{
+            const product_id = rows.insertId;
+            images.forEach((image) => {
+                const imageName = image.originalname;
+                connection.query(`INSERT INTO tbl_product_image_gallery(product_id, image) VALUES('${product_id}', '${imageName}')`, (err, rows) => {
+                    if(err){
+                        return res.status(400).json({
+                            status: false,
+                            error: err.message
+                        });
+                    }
+                })
+            });
+            return res.status(200).json({
+                status: true,
+                error: 'Product Upload succesfully.'
+            });
+        }
+    });
+};
+const editProduct = (req, res) => {};
+const updateProduct = (req, res) => {};
+const deleteProduct = (req, res) => {};
+
 module.exports = {
     getCategory,
     createCategory,
@@ -234,5 +288,10 @@ module.exports = {
     createBanner,
     editBanner,
     updateBanner,
-    deleteBanner
+    deleteBanner,
+    getProduct,
+    createProduct,
+    editProduct,
+    updateProduct,
+    deleteProduct
 };

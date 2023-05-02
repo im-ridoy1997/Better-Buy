@@ -20,7 +20,43 @@ const createBanner = (req, res, next) => {
     next();
 };
 
+const createProduct = (req, res, next) => {
+    const { category_id, name, description, price, qty } = req.body;
+    if(!name) {
+        return res.status(400).json({
+            status: false,
+            error: 'Name is required.'
+        });
+    }
+    if(!category_id) {
+        return res.status(400).json({
+            status: false,
+            error: 'Category is required.'
+        });
+    }
+    if(!description) {
+        return res.status(400).json({
+            status: false,
+            error: 'Description is required.'
+        });
+    }
+    if(!price) {
+        return res.status(400).json({
+            status: false,
+            error: 'Price is required.'
+        });
+    }
+    if(!qty) {
+        return res.status(400).json({
+            status: false,
+            error: 'Qty is required.'
+        });
+    }
+    next();
+};
+
 module.exports = {
     createCategory,
-    createBanner
+    createBanner,
+    createProduct
 };
