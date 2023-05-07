@@ -25,6 +25,10 @@ router.delete('/admin/banner/:id', backendController.deleteBanner);
 //Product routes
 router.get('/admin/product', backendController.getProduct);
 router.post('/admin/product-create', multipleFileUpload.uploadFiles, formValidation.createProduct, backendController.createProduct);
+router.get('/admin/product-edit/:id', backendController.editProduct)
+router.post('/admin/product-update', multipleFileUpload.updateFiles, backendController.updateProduct);
+router.delete('/admin/product-image/:id', backendController.deleteProductImage);
+router.delete('/admin/product/:id', backendController.deleteProduct);
 
 //------ Admin Route End -----//
 

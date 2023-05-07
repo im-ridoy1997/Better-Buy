@@ -269,14 +269,115 @@ const createProduct = (req, res) => {
             });
             return res.status(200).json({
                 status: true,
-                error: 'Product Upload succesfully.'
+                error: 'Product upload succesfully.'
             });
         }
     });
 };
-const editProduct = (req, res) => {};
-const updateProduct = (req, res) => {};
-const deleteProduct = (req, res) => {};
+
+const editProduct = (req, res) => {
+    const id = req.params.id;
+    let product = null;
+    let images = null;
+    const baseUrl = req.protocol + '://' + req.hostname + '/uploads/';
+    connection.query(`SELECT * FROM tbl_product WHERE id = '${id}'`, (err, rows) => {
+        if(err){
+            return res.status(400).json({
+                status: false,
+                error: err.message
+            });
+        }else{
+            product = rows[0];
+            connection.query(`SELECT * FROM tbl_product_image_gallery WHERE product_id = '${id}'`, (errors, results) => {
+                if(errors){
+                    return res.status(400).json({
+                        status: false,
+                        error: errors.message
+                    });
+                }else{
+                    images = results;
+                    images.forEach((productImage) => {
+                        productImage.image = baseUrl + productImage.image;
+                    });
+                    product.images = images;
+                    return res.status(200).json({
+                        status: true,
+                        data: product
+                    });
+                }
+            });
+        }
+    });
+};
+
+const updateProduct = (req, res) => {
+    const id = req.body.id;
+    const category_id = req.body.category_id;
+    const brand_id = req.body.brand_id === "" ? 0 : req.body.brand_id
+    const name = req.body.name;
+    const description = req.body.description;
+    const price = req.body.price;
+    const qty = req.body.qty;
+    const images = req.files;
+    connection.query(`UPDATE tbl_product SET category_id = '${category_id}', brand_id = '${brand_id}', name = '${name}', description = '${description}', price = '${price}', qty = '${qty}' WHERE id = '${id}'`, (err, rows) => {
+        if(err){
+            return res.status(400).json({
+                status: false,
+                error: err.message
+            });
+        }else{
+            images.forEach((image) => {
+                const imageName = image.originalname;
+                connection.query(`INSERT INTO tbl_product_image_gallery(product_id, image) VALUES('${id}', '${imageName}')`, (err, rows) => {
+                    if(err){
+                        return res.status(400).json({
+                            status: false,
+                            error: err.message
+                        });
+                    }
+                })
+            });
+            return res.status(200).json({
+                status: true,
+                error: 'Product update succesfully.'
+            });
+        }
+    });
+};
+
+const deleteProductImage = (req, res) => {
+    const id = req.params.id;
+    connection.query(`DELETE FROM tbl_product_image_gallery where id = '${id}'`, (err, rows) => {
+        if(err) {
+            return res.status(400).json({
+                status: false,
+                error: err.message
+            }); 
+        }else{
+            return res.status(200).json({
+                status: true,
+                message: 'Product image delete successfully.'
+            }); 
+        }
+    })
+};
+
+const deleteProduct = (req, res) => {
+    const id = req.params.id;
+    connection.query(`DELETE FROM tbl_product where id = '${id}'`, (err, rows) => {
+        if(err) {
+            return res.status(400).json({
+                status: false,
+                error: err.message
+            }); 
+        }else{
+            return res.status(200).json({
+                status: true,
+                message: 'Product delete successfully.'
+            }); 
+        }
+    })
+};
 
 module.exports = {
     getCategory,
@@ -293,5 +394,6 @@ module.exports = {
     createProduct,
     editProduct,
     updateProduct,
+    deleteProductImage,
     deleteProduct
 };

@@ -13,6 +13,7 @@ const upload = multer({
     storage: storage
 });
 
+//----- Product images upload -----//
 const uploadFiles = (req, res, next) => {
     upload.array('images', 10)(req, res, (err) => {
         if(err instanceof multer.MulterError){
@@ -36,6 +37,25 @@ const uploadFiles = (req, res, next) => {
     });
 };
 
+//----- Product images update -----//
+const updateFiles = (req, res, next) => {
+    upload.array('images', 10)(req, res, (err) => {
+        if(err instanceof multer.MulterError){
+            return res.status(500).json({
+                status: false,
+                error: err
+            });
+        }else if(err){
+            return res.status(400).json({
+                status: false,
+                error: err
+            });
+        }
+        next();
+    })
+};
+
 module.exports = {
-    uploadFiles
+    uploadFiles,
+    updateFiles
 };
