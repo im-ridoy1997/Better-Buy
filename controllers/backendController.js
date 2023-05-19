@@ -1,5 +1,45 @@
 const connection = require('../config.js');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
+
+const login = (req, res) => {
+    const { email, password } = req.body;
+
+    connection.query(`SELECT * FROM tbl_admin WHERE email = '${email}'`, (err, rows) => {
+        if(err){
+            return res.status(400).json({
+                status: false,
+                error: err.message
+            });
+        }else if(rows.length === 0){
+            return res.status(200).json({
+                status: true,
+                error: "Email doesn't match."
+            });
+        }else{
+            bcrypt.compare(password, rows[0].password, (error, isMatch) => {
+                if(error){
+                    return res.status(500).json({
+                        status: false,
+                        error: err.message
+                    });
+                }else if(!isMatch){
+                    return res.status(401).json({
+                        status: false,
+                        error: "Password not valid."
+                    });
+                }
+                const token = jwt.sign({ id: rows[0].id, name: rows[0].name, email: rows[0].email }, process.env.SECRET_KEY, { expiresIn: '100s' });
+                return res.status(200).json({
+                    status: true,
+                    token: token,
+                    admin: rows[0]
+                });
+            });
+        }
+    });
+};
 
 const getCategory = (req, res) => {
     connection.query(`SELECT * FROM tbl_category WHERE is_deleted = 0`, (err, rows) => {
@@ -380,6 +420,7 @@ const deleteProduct = (req, res) => {
 };
 
 module.exports = {
+    login,
     getCategory,
     createCategory,
     editCategory,

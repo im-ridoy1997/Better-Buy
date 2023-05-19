@@ -1,3 +1,20 @@
+const login = (req, res, next) => {
+    const { email ,password } = req.body;
+    if(!email){
+        return res.status(400).json({
+            status: false,
+            error: 'Email is required.'
+        });
+    }
+    if(!password){
+        return res.status(400).json({
+            status: false,
+            error: 'Password is required.'
+        });
+    }
+    next();
+};
+
 const createCategory = (req, res, next) => {
     const category_name = req.body.category_name;
     if(!category_name){
@@ -56,6 +73,7 @@ const createProduct = (req, res, next) => {
 };
 
 module.exports = {
+    login,
     createCategory,
     createBanner,
     createProduct

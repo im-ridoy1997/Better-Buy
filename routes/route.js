@@ -4,12 +4,15 @@ const backendController = require('../controllers/backendController.js');
 const formValidation = require('../middleware/formValidation.js');
 const fileUpload = require('../middleware/fileUpload.js');
 const multipleFileUpload = require('../middleware/multipleFileUpload.js');
+const authenticateToken = require('../middleware/authenticateToken.js');
 
 
 //----- Admin Routes Start -----//
 
+router.post('/admin/login', formValidation.login, backendController.login);
+
 //category routes
-router.get('/admin/category', backendController.getCategory);
+router.get('/admin/category', authenticateToken, backendController.getCategory);
 router.post('/admin/category-create', formValidation.createCategory, backendController.createCategory);
 router.get('/admin/category-edit/:id', backendController.editCategory);
 router.post('/admin/category-update', formValidation.createCategory, backendController.updateCategory);
